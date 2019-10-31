@@ -1,7 +1,8 @@
 <template>
 <div id="app">
-	<div class="container-fluid">
+	<div class="container-fluid" id="containerBanniere">
 		<img id="banniere" src="./assets/banniere.jpg" />
+		<div id="slogan">Peut-être la toute première giffothèque de France au monde !</div>
 	</div>
 	<div class="container">
 		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer</a><br>
@@ -148,6 +149,9 @@ export default {
 				}
 			}
 		}
+        this.tags.sort(function(a,b){
+            return b.lastModifiedOn - a.lastModifiedOn
+        })
 	},
 	mounted: function(){
 		this.sortDirection[this.currentCriteria]=-1
@@ -178,11 +182,21 @@ body{
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
 }
+#containerBanniere{
+	position:relative;
+}
 #banniereContainer{
 	text-align:center;
 }
 #banniere{
 	width:100%;
+}
+#slogan{
+	color:white;
+	position:absolute;
+	bottom:10px;
+	right:10px;
+	font-style:italic;
 }
 #slide-out{
 	color:black;
