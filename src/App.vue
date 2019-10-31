@@ -130,15 +130,10 @@ export default {
 		}
     },
 	beforeMount() {
-		/*
-		for(var a=0;a<105;a++){
-			var toPush = this.gifs[0]
-			toPush.id = toPush.id+a
-			this.gifs.push(toPush)
-			
-		}
-		*/
 		for(var i=0; i<this.gifs.length; i++){
+			if(this.gifs[i]['gildings']===undefined){
+				this.gifs[i]['gildings'] = {}
+			}
 			if(this.authors[this.gifs[i]['author']]===undefined){
 				this.authors[this.gifs[i]['author']] = 1
 			}else{

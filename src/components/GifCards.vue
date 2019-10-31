@@ -1,7 +1,7 @@
 <template>
 <div v-masonry transition-duration="0.3s" item-selector=".col" class="masonry-container row" id="gifs">
 	<div v-masonry-tile class="col s12 m6 l4 xl3 gif" v-for="gif in gifs" :key="gif.id">
-		<div target="_blank" href="https://www.reddit.com" class="gifContent">
+		<a target="_blank" :href="gif.permalink" class="gifContent">
 			<div class="gildings">
 				<div v-if="gif.gildings.gid_1!=undefined" class="gifSilver">
 					<img class="inlineIcon" src="https://www.redditstatic.com/gold/awards/icon/silver_24.png"/>
@@ -29,7 +29,7 @@
 					<i class="material-icons left">comment</i><span class="dataValeur">{{gif.comments}}</span>
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 </div>
 </template>
