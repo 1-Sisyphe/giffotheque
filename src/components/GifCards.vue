@@ -16,7 +16,7 @@
 					<span class="dataValeur">{{gif.gildings.gid_3}}</span>
 				</div>
 			</div>
-			<img :src="gif.preview" class="gifPreview"/>
+			<img v-on:click.prevent="$emit('setFramableUrlEmit', gif.framableLink)" :src="gif.preview" class="gifPreview"/>
 			<div class="gifTitle">{{gif.title}}</div>
 			<div class="gifDate">{{gif.date | moment("MM-DD-YY")}}</div><div class="gifAuthor">u/{{gif.author}}</div><br>
 			

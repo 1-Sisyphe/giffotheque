@@ -1,8 +1,8 @@
 <template>
 <div id="app">
 	<div class="container-fluid" id="containerBanniere">
-		<img id="banniere" src="./assets/banniere.jpg" />
-		<div id="slogan">Peut-être la toute première giffothèque de France au monde !</div>
+		<img id="banniere" src="./assets/titre.png" />
+		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container">
 		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer</a><br>
@@ -39,7 +39,11 @@
 		<hr><br>
 	</div>
 	<div class="container">
-		<gif-cards :gifs="displayedList"/>
+		<gif-cards :gifs="displayedList" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
+	</div>
+	<div id="wrapFramable" v-on:click="framableVisible=false" v-if="framableVisible">
+		<i class="material-icons right clearTags" id="closeFramable">clear</i>
+		<embed v-bind:src="currentFramableLink" width="600" height="400" id="framableObj">
 	</div>
 </div>
 </template>
@@ -65,7 +69,9 @@ export default {
 			authors : {},
 			tags:{},
 			selectedTags:[],
-			selectedAuthors:[]
+			selectedAuthors:[],
+			currentFramableLink:"",
+			framableVisible : false
 		}
 	}, 
 	computed: {
@@ -128,10 +134,21 @@ export default {
 		clearTags(type){
 			if(type=="tags")this.selectedTags = []
 			if(type=="authors")this.selectedAuthors = []
+		},
+		setFramableUrl(url){
+			if(url!==""){
+				this.currentFramableLink = url
+				this.framableVisible = true
+			}
 		}
     },
 	beforeMount() {
 		for(var i=0; i<this.gifs.length; i++){
+			if(this.gifs[i]['customThumbnail']!==undefined){
+				if(this.gifs[i]['customThumbnail']!=""){
+					this.gifs[i]['preview'] = this.gifs[i]['customThumbnail']
+				}
+			}
 			if(this.gifs[i]['gildings']===undefined){
 				this.gifs[i]['gildings'] = {}
 			}
@@ -149,9 +166,9 @@ export default {
 				}
 			}
 		}
-        this.tags.sort(function(a,b){
+		/*this.tags.sort(function(a,b){
             return b.lastModifiedOn - a.lastModifiedOn
-        })
+        })*/
 	},
 	mounted: function(){
 		this.sortDirection[this.currentCriteria]=-1
@@ -182,20 +199,35 @@ body{
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
 }
+#wrapFramable{
+	position:fixed;
+	bottom:0px;
+	width:100%;
+	background:black;
+	padding-top:40px;
+	cursor:pointer;
+}
+#closeFramable{
+	margin-right:15px;
+}
+#framableObj{
+	width:100%;
+}
 #containerBanniere{
 	position:relative;
-}
-#banniereContainer{
 	text-align:center;
+	background-image:url(./assets/banniere2.jpg);
+	background-size:100% auto;
+	background-position:center;
 }
 #banniere{
-	width:100%;
+	max-width:60%;
 }
 #slogan{
 	color:white;
 	position:absolute;
-	bottom:10px;
-	right:10px;
+	bottom:-2px;
+	right:2px;
 	font-style:italic;
 }
 #slide-out{
@@ -285,6 +317,7 @@ body{
 }
 .gifPreview{
 	width:100%;
+	cursor:all-scroll;
 }
 .gifDescription{
 	font-style:italic;
