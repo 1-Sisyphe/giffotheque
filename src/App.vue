@@ -203,12 +203,14 @@ body{
 	position:fixed;
 	bottom:0px;
 	width:100%;
-	background:black;
-	padding-top:40px;
+	background:#101010;
+	padding-top:20px;
 	cursor:pointer;
+	vertical-align:middle;
 }
 #closeFramable{
 	margin-right:15px;
+	margin-bottom:15px;
 }
 #framableObj{
 	width:100%;
@@ -302,7 +304,7 @@ body{
 	background-color:#2a2727;
 	padding:10px;
 	display:block;
-	cursor:pointer;
+	cursor:default;
 	color:#dddddd;
 	text-align:center;
 	
@@ -317,7 +319,7 @@ body{
 }
 .gifPreview{
 	width:100%;
-	cursor:all-scroll;
+	cursor:pointer;
 }
 .gifDescription{
 	font-style:italic;
@@ -372,7 +374,7 @@ i.left{
 .dataValeur{
 	vertical-align:middle;
 }
-.gif:hover .gifTitle{
+.gifTitle:hover{
 	color:#bf7e64
 }
 .gifKarma>i{
