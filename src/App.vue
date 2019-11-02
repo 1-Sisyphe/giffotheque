@@ -42,7 +42,9 @@
 		<gif-cards :gifs="displayedList" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
 	</div>
 	<div id="wrapFramable" v-on:click="framableVisible=false" v-if="framableVisible">
-		<i class="material-icons right clearTags" id="closeFramable">clear</i>
+		<div id="wrapCloseFramable">
+			<i class="material-icons right clearTags" id="closeFramable">clear</i>
+		</div>
 		<embed v-bind:src="currentFramableLink" width="600" height="400" id="framableObj">
 	</div>
 </div>
@@ -136,7 +138,7 @@ export default {
 			if(type=="authors")this.selectedAuthors = []
 		},
 		setFramableUrl(url){
-			if(url!==""){
+			if(url!==""&&url!==undefined){
 				this.currentFramableLink = url
 				this.framableVisible = true
 			}
@@ -209,8 +211,16 @@ body{
 	vertical-align:middle;
 }
 #closeFramable{
-	margin-right:15px;
-	margin-bottom:15px;
+	margin-right: 15px;
+	margin-top: 15px;
+	color:#dc5116;
+}
+#wrapCloseFramable{
+	height: 59px;
+	margin-top: -20px;
+}
+#wrapCloseFramable:hover>#closeFramable{
+	color:#bf7e64;
 }
 #framableObj{
 	width:100%;
