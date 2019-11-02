@@ -2,7 +2,7 @@
 <div v-masonry transition-duration="0.3s" item-selector=".col" class="masonry-container row" id="gifs">
 	<div v-masonry-tile class="col s12 m6 l4 xl3 gif" v-for="gif in gifs" :key="gif.id">
 		<span class="gifContent">
-			<div class="gildings">
+			<div v-if="gif.gildings.gid_1!=undefined||gif.gildings.gid_2!=undefined||gif.gildings.gid_3!=undefined" class="gildings">
 				<div v-if="gif.gildings.gid_1!=undefined" class="gifSilver">
 					<img class="inlineIcon" src="https://www.redditstatic.com/gold/awards/icon/silver_24.png"/>
 					<span class="dataValeur">{{gif.gildings.gid_1}}</span>

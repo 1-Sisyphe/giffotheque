@@ -45,7 +45,7 @@
 		<div id="wrapCloseFramable">
 			<i class="material-icons right clearTags" id="closeFramable">clear</i>
 		</div>
-		<embed v-bind:src="currentFramableLink" width="600" height="400" id="framableObj">
+		<embed v-bind:src="currentFramableLink" id="framableObj">
 	</div>
 </div>
 </template>
@@ -112,6 +112,7 @@ export default {
 			}else{
 				this.selectedAuthors.splice(this.selectedAuthors.indexOf(aut),1)
 			}
+			this.$nextTick(() => this.$redrawVueMasonry());
 		},
 		selectTag:function(tag){
 			if(this.selectedTags.indexOf(tag)==-1){
@@ -119,6 +120,7 @@ export default {
 			}else{
 				this.selectedTags.splice(this.selectedTags.indexOf(tag),1)
 			}
+			this.$nextTick(() => this.$redrawVueMasonry());
 		},
 		tagIsSelected(tag){
 			return this.selectedTags.indexOf(tag)!=-1
@@ -149,6 +151,11 @@ export default {
 			if(this.gifs[i]['customThumbnail']!==undefined){
 				if(this.gifs[i]['customThumbnail']!=""){
 					this.gifs[i]['preview'] = this.gifs[i]['customThumbnail']
+				}
+			}
+			if(this.gifs[i]['customFramableLink']!==undefined){
+				if(this.gifs[i]['customFramableLink']!=""){
+					this.gifs[i]['framableLink'] = this.gifs[i]['customFramableLink']
 				}
 			}
 			if(this.gifs[i]['gildings']===undefined){
@@ -218,17 +225,22 @@ body{
 #wrapCloseFramable{
 	height: 59px;
 	margin-top: -20px;
+	background-color:#040404;
+}
+#wrapCloseFramable:hover{
+	background-color:#070707;
 }
 #wrapCloseFramable:hover>#closeFramable{
 	color:#bf7e64;
 }
 #framableObj{
 	width:100%;
+	height:45vh;
 }
 #containerBanniere{
 	position:relative;
 	text-align:center;
-	background-image:url(./assets/banniere2.jpg);
+	background-image:url(./assets/banniere.png);
 	background-size:100% auto;
 	background-position:center;
 }
