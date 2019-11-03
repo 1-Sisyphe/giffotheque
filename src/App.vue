@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-	<div class="container-fluid" id="containerBanniere">
+	<div class="container-fluid OnEstLesGrosNoobsDuGit" id="containerBanniere">
 		<img id="banniere" src="./assets/titre.png" />
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
