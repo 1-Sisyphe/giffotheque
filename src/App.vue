@@ -5,7 +5,7 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container">
-		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer ({{gifsToDisplay.length}})</a><br>
+		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer</a><br>
 		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
@@ -19,24 +19,53 @@
 		</div>-->
 	</div>
 	<div id="slide-out" class="side-nav">
+		<span id="nbGigsSelected">{{textNbGifs()}}</span>
+		
 		<hr>
+		
+		
+		
+		
 		<i v-on:click="clearTags('tags')" v-if="selectedTags.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Thèmes</h3>
+		<h3 class="categoryTags">Tags</h3>
 		<div id="wrapTags">
 			<div class="col s12 m6 l4 tag"  v-for="(nb,tag) in tags" :key="tag" v-on:click="selectTag(tag)" v-bind:class="{ tagActif: tagIsSelected(tag) }">
-				{{tag}} ({{nb}})
+				{{tag}} <span class="nbGifTag">({{nb}})</span>
 			</div>
 		</div>
 		<hr>
+		
+		
+		<i v-on:click="clearTags('themes')" v-if="selectedThemes.length!=0" class="material-icons right clearTags">clear</i><br>
+		<h3 class="categoryTags">Thèmes</h3>
+		<div id="wrapThemes">
+			<div class="col s12 m6 l4 theme"  v-for="(nb,theme) in themes" :key="theme" v-on:click="selectTheme(theme)" v-bind:class="{ themeActif: themeIsSelected(theme) }">
+				{{theme}} <span class="nbGifTheme">({{nb}})</span>
+			</div>
+		</div>
+		<hr>
+		
+		<i v-on:click="clearTags('sources')" v-if="selectedSources.length!=0" class="material-icons right clearTags">clear</i><br>
+		<h3 class="categoryTags">Source</h3>
+		<div id="wrapSources">
+			<div class="col s12 m6 l4 source"  v-for="(nb,source) in sources" :key="source" v-on:click="selectSource(source)" v-bind:class="{ sourceActif: sourceIsSelected(source) }">
+				{{source}} <span class="nbGifSource">({{nb}})</span>
+			</div>
+		</div>
+		<hr>
+		
 		
 		<i v-on:click="clearTags('authors')" v-if="selectedAuthors.length!=0" class="material-icons right clearTags">clear</i><br>
 		<h3 class="categoryTags">Auteurs </h3>
 		<div id="wrapAuteurs">
 			<div class="col s12 m6 l4 tag"  v-for="(nb,author) in authors" :key="author" v-on:click="selectAuthor(author)" v-bind:class="{ tagActif: authorIsSelected(author) }">
-				{{author}} ({{nb}})
+				{{author}} <span class="nbGifTag">({{nb}})</span>
 			</div>
 		</div>
-		<hr><br>
+		<hr>
+
+		
+		<br>
 	</div>
 	<div class="container">
 		<gif-cards :gifs="displayedGifs" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
@@ -75,6 +104,10 @@ export default {
 			authors : {},
 			tags:{},
 			selectedTags:[],
+			themes:{},
+			selectedThemes:[],
+			sources:{},
+			selectedSources:[],
 			selectedAuthors:[],
 			currentFramableLink:"",
 			framableVisible : false
@@ -84,7 +117,6 @@ export default {
 	},
 	methods: {
         sortList: function (criteria,swapOrder) {
-			
             if(criteria==this.currentCriteria&&swapOrder)this.sortDirection[criteria] = -this.sortDirection[criteria]
             this.currentCriteria = criteria
             var direction = this.sortDirection[this.currentCriteria]
@@ -112,6 +144,22 @@ export default {
 				filteredGifs = filteredGifs.filter(function(a){
 					for(var i = 0;i<tags.length;i++){
 						if(a['tags'].indexOf(tags[i])!=-1) return true
+					}
+				})
+			}
+			var themes = this.selectedThemes
+			if(themes.length!=0){
+				filteredGifs = filteredGifs.filter(function(a){
+					for(var i = 0;i<themes.length;i++){
+						if(a['themes'].indexOf(themes[i])!=-1) return true
+					}
+				})
+			}
+			var sources = this.selectedSources
+			if(sources.length!=0){
+				filteredGifs = filteredGifs.filter(function(a){
+					for(var i = 0;i<sources.length;i++){
+						if(a['sources'].indexOf(sources[i])!=-1) return true
 					}
 				})
 			}
@@ -143,6 +191,37 @@ export default {
 		tagIsSelected(tag){
 			return this.selectedTags.indexOf(tag)!=-1
 		},
+
+
+
+
+		selectTheme:function(theme){
+			if(this.selectedThemes.indexOf(theme)==-1){
+				this.selectedThemes.push(theme)
+			}else{
+				this.selectedThemes.splice(this.selectedThemes.indexOf(theme),1)
+			}
+			this.filterList()
+		},
+		themeIsSelected(theme){
+			return this.selectedThemes.indexOf(theme)!=-1
+		},
+
+
+
+		selectSource:function(source){
+			if(this.selectedSources.indexOf(source)==-1){
+				this.selectedSources.push(source)
+			}else{
+				this.selectedSources.splice(this.selectedSources.indexOf(source),1)
+			}
+			this.filterList()
+		},
+		sourceIsSelected(source){
+			return this.selectedSources.indexOf(source)!=-1
+		},
+
+
 		authorIsSelected(aut){
 			return this.selectedAuthors.indexOf(aut)!=-1
 		},
@@ -155,6 +234,8 @@ export default {
 		},
 		clearTags(type){
 			if(type=="tags")this.selectedTags = []
+			if(type=="themes")this.selectedThemes = []
+			if(type=="sources")this.selectedSources = []
 			if(type=="authors")this.selectedAuthors = []
 			this.filterList()
 		},
@@ -162,6 +243,16 @@ export default {
 			if(url!==""&&url!==undefined){
 				this.currentFramableLink = url
 				this.framableVisible = true
+			}
+		},
+		textNbGifs(){
+			var nb = this.gifsToDisplay.length;
+			if(nb==0){
+				return "Aucun gif trouvé"
+			}else if(nb==1){
+				return nb+" gif trouvé"
+			}else{
+				return nb+" gifs trouvés"
 			}
 		},
 		getGifsChunk(){
@@ -208,6 +299,31 @@ export default {
 					this.tags[this.gifs[i]['tags'][j]]++
 				}
 			}
+
+			if(this.gifs[i]['themes']==undefined)this.gifs[i]['themes'] = []
+			for(var k=0;k<this.gifs[i]['themes'].length;k++){
+				if(this.themes[this.gifs[i]['themes'][k]]===undefined){
+					this.themes[this.gifs[i]['themes'][k]] = 1
+				}else{
+					this.themes[this.gifs[i]['themes'][k]]++
+				}
+			}
+			
+			
+			
+			if(this.gifs[i]['sources']==undefined)this.gifs[i]['sources'] = []
+			for(var l=0;l<this.gifs[i]['sources'].length;l++){
+				if(this.sources[this.gifs[i]['sources'][l]]===undefined){
+					this.sources[this.gifs[i]['sources'][l]] = 1
+				}else{
+					this.sources[this.gifs[i]['sources'][l]]++
+				}
+			}
+
+
+
+
+
 		}
 	},
 	mounted: function(){
@@ -242,8 +358,8 @@ body{
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
 }
-.side-nav{
-	height:100%;
+#nbGigsSelected{
+	color:#dc5116;
 }
 #wrapFramable{
 	position:fixed;
@@ -293,18 +409,19 @@ body{
 }
 #slide-out{
 	color:black;
-	text-align:center;
+	text-align:left;
 	background:#111;
 	color:#eee;
 	padding:30px;
 	width:30vw;
 	min-width:500px;
-	
+	height:100%;
 }
 .categoryTags{
 	color:#dc5116;
 	margin:5px;
 	margin-bottom:15px;
+	text-align:center
 }
 .clearTags{
 	color:#dc5116;
@@ -314,7 +431,7 @@ body{
 .clearTags:hover{
 	color:#ba3c07;
 }
-.tag{
+.tag,.theme,.source{
 	display:inline-block;
 	margin:2px 5px;
 	border-radius:4px;
@@ -325,9 +442,15 @@ body{
 	border:solid grey 2px;
 	color:#dddddd;
 }
-.tagActif{
+.tagActif,.themeActif,.sourceActif{
 	border:solid grey 2px;
 	background:#ba3c07;
+}
+.nbGifTag,.nbGifSource,.nbGifSource{
+	color:#999
+}
+.tagActif>.nbGifTag,.themeActif>.nbGifTheme,.themeActif>.nbGifTheme{
+	color:#bbb
 }
 .btn.disabled{
 	cursor:pointer;
@@ -349,7 +472,7 @@ body{
 .selectableList{
 	text-align:center;
 }
-#wrapTags,#wrapAuteurs,#wrapTrier{
+#wrapTags,#wrapThemes,#wrapSources,#wrapAuteurs,#wrapTrier{
 	text-align:center;
 	margin-bottom:30px;
 }
