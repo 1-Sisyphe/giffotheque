@@ -1,8 +1,8 @@
 <template>
 <div v-masonry transition-duration="0.3s" item-selector=".col" class="masonry-container row" id="gifs">
 	<div v-masonry-tile class="col s12 m6 l4 xl3 gif" v-for="gif in gifs" :key="gif.id">
-		<a target="_blank" :href="gif.permalink" class="gifContent">
-			<div class="gildings">
+		<span class="gifContent">
+			<div v-if="gif.gildings.gid_1!=undefined||gif.gildings.gid_2!=undefined||gif.gildings.gid_3!=undefined" class="gildings">
 				<div v-if="gif.gildings.gid_1!=undefined" class="gifSilver">
 					<img class="inlineIcon" src="https://www.redditstatic.com/gold/awards/icon/silver_24.png"/>
 					<span class="dataValeur">{{gif.gildings.gid_1}}</span>
@@ -16,8 +16,8 @@
 					<span class="dataValeur">{{gif.gildings.gid_3}}</span>
 				</div>
 			</div>
-			<img :src="gif.preview" class="gifPreview"/>
-			<div class="gifTitle">{{gif.title}}</div>
+			<img v-on:click="$emit('setFramableUrlEmit', gif.framableLink)" :src="gif.preview" class="gifPreview"/>
+			<a target="_blank" :href="gif.permalink"><div class="gifTitle">{{gif.title}}</div></a>
 			<div class="gifDate">{{gif.date | moment("MM-DD-YY")}}</div><div class="gifAuthor">u/{{gif.author}}</div><br>
 			
 			<div class="gifDescription">{{gif.description}}</div>
@@ -29,7 +29,7 @@
 					<i class="material-icons left">comment</i><span class="dataValeur">{{gif.comments}}</span>
 				</div>
 			</div>
-		</a>
+		</span>
 	</div>
 </div>
 </template>
