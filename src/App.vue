@@ -27,7 +27,7 @@
 		
 		
 		<i v-on:click="clearTags('tags')" v-if="selectedTags.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Tags</h3>
+		<h3 class="categoryTags">Mots-clés</h3>
 		<div id="wrapTags">
 			<div class="col s12 m6 l4 tag"  v-for="(nb,tag) in tags" :key="tag" v-on:click="selectTag(tag)" v-bind:class="{ tagActif: tagIsSelected(tag) }">
 				{{tag}} <span class="nbGifTag">({{nb}})</span>
@@ -340,20 +340,14 @@ export default {
 
 </script>
 <style>
-
-div {
-  /* linearly increase the font-size from 16->32px 
-     between a viewport width of 600px-> 1200px  */
-  @include fluid-type(font-size, 600px, 1200px, 16px, 32px);
-}
 @media screen and (max-width: 993px) {
   body {
-     font-size: 18px;
+     font-size: 12px;
   }
 }
 @media screen and (min-width: 1200px) {
   body {
-     font-size: 16px;
+     font-size: 20px;
   }
 }
 .loader {
@@ -426,6 +420,7 @@ body{
 	bottom:-2px;
 	right:2px;
 	font-style:italic;
+	font-size:1em;
 }
 #slide-out{
 	color:black;
@@ -433,15 +428,16 @@ body{
 	background:#111;
 	color:#eee;
 	padding:30px;
-	width:30vw;
-	min-width:500px;
+	width:500px;
+	max-width:80vw;
 	height:100%;
 }
 .categoryTags{
 	color:#dc5116;
 	margin:5px;
 	margin-bottom:15px;
-	text-align:center
+	text-align:center;
+	font-size:1.8em;
 }
 .clearTags{
 	color:#dc5116;
@@ -477,6 +473,7 @@ body{
 }
 .btnTri{
 	background:#ba3c07;
+	width:140px
 }
 .btnTri:hover{
 	background:#dc5116
