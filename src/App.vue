@@ -5,15 +5,15 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container">
-		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer</a><br>
-		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortBy('date')" v-bind:class="{ disabled: currentCriteria!='date' }">
+		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer ({{gifsToDisplay.length}})</a><br>
+		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortList('date')" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
-		<a id="triKarma" href="#" class="btn hoverable btnTri" v-on:click="sortBy('karma')" v-bind:class="{ disabled: currentCriteria!='karma' }">
+		<a id="triKarma" href="#" class="btn hoverable btnTri" v-on:click="sortList('karma')" v-bind:class="{ disabled: currentCriteria!='karma' }">
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 		<!--<div id="wrapTri">
-			<a id="triComments" href="#" class="btn hoverable btnTri" v-on:click="sortBy('comments')" v-bind:class="{ disabled: currentCriteria!='comments' }">
+			<a id="triComments" href="#" class="btn hoverable btnTri" v-on:click="sortList('comments')" v-bind:class="{ disabled: currentCriteria!='comments' }">
 				<i class="material-icons right">{{iconSortBy('comments')}}</i>Commentaires
 			</a>
 		</div>-->
@@ -39,7 +39,7 @@
 		<hr><br>
 	</div>
 	<div class="container">
-		<gif-cards :gifs="displayedList" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
+		<gif-cards :gifs="displayedGifs" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
 	</div>
 	<div id="wrapFramable" v-on:click="framableVisible=false" v-if="framableVisible">
 		<div id="wrapCloseFramable">
@@ -62,6 +62,10 @@ export default {
 	data() {
 		return {
 			gifs: gifs,
+			gifsToDisplay : [],
+			displayedGifs : [],
+			gifsChunkLength : 16,
+			currentPage : 1,
             sortDirection:{
                 "karma":1,
                 "date":1,
@@ -77,7 +81,24 @@ export default {
 		}
 	}, 
 	computed: {
-		displayedList: function () {
+	},
+	methods: {
+        sortList: function (criteria) {
+            if(criteria==this.currentCriteria)this.sortDirection[criteria] = -this.sortDirection[criteria]
+            this.currentCriteria = criteria
+            var direction = this.sortDirection[this.currentCriteria]
+            this.gifsToDisplay = this.gifsToDisplay.sort(function(a, b) {
+                return direction*(b[criteria] - a[criteria]);
+            })
+			this.currentPage = 1
+			this.displayedGifs = []
+			var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+			for(var i=0;i<firstIndex;i++){
+				this.displayedGifs.push(this.gifsToDisplay[i])
+			}
+			//this.$nextTick(() => this.$redrawVueMasonry());
+		},
+		filterList: function () {
 			var filteredGifs = this.gifs.slice()
 			var authors = this.selectedAuthors
 			if(authors.length!=0){
@@ -93,18 +114,13 @@ export default {
 					}
 				})
 			}
-			return filteredGifs
-		}
-	},
-	methods: {
-        sortBy: function (criteria) {
-            if(criteria==this.currentCriteria)this.sortDirection[criteria] = -this.sortDirection[criteria]
-            this.currentCriteria = criteria
-            var direction = this.sortDirection[this.currentCriteria]
-            this.gifs = this.gifs.sort(function(a, b) {
-                return direction*(b[criteria] - a[criteria]);
-            })
-			this.$nextTick(() => this.$redrawVueMasonry());
+			this.gifsToDisplay = filteredGifs
+			this.currentPage = 1
+			this.displayedGifs = []
+			var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+			for(var i=0;i<firstIndex;i++){
+				this.displayedGifs.push(this.gifsToDisplay[i])
+			}
 		},
 		selectAuthor:function(aut){
 			if(this.selectedAuthors.indexOf(aut)==-1){
@@ -112,7 +128,7 @@ export default {
 			}else{
 				this.selectedAuthors.splice(this.selectedAuthors.indexOf(aut),1)
 			}
-			this.$nextTick(() => this.$redrawVueMasonry());
+			this.filterList()
 		},
 		selectTag:function(tag){
 			if(this.selectedTags.indexOf(tag)==-1){
@@ -120,7 +136,7 @@ export default {
 			}else{
 				this.selectedTags.splice(this.selectedTags.indexOf(tag),1)
 			}
-			this.$nextTick(() => this.$redrawVueMasonry());
+			this.filterList()
 		},
 		tagIsSelected(tag){
 			return this.selectedTags.indexOf(tag)!=-1
@@ -138,11 +154,27 @@ export default {
 		clearTags(type){
 			if(type=="tags")this.selectedTags = []
 			if(type=="authors")this.selectedAuthors = []
+			this.filterList()
 		},
 		setFramableUrl(url){
 			if(url!==""&&url!==undefined){
 				this.currentFramableLink = url
 				this.framableVisible = true
+			}
+		},
+		getGifsChunk(){
+			var currentIndex = this.displayedGifs.length
+			var nextIndex = Math.min(this.gifsToDisplay.length,currentIndex+this.gifsChunkLength)
+			for(var i=currentIndex; i<nextIndex;i++){
+				this.displayedGifs.push(this.gifsToDisplay[i])
+			}
+		},
+		handleScroll() {
+			let scrollHeight = window.scrollY
+			let maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
+
+			if (scrollHeight >= maxHeight - 200) {
+				this.getGifsChunk()
 			}
 		}
     },
@@ -175,14 +207,16 @@ export default {
 				}
 			}
 		}
-		/*this.tags.sort(function(a,b){
-            return b.lastModifiedOn - a.lastModifiedOn
-        })*/
 	},
 	mounted: function(){
+		this.gifsToDisplay = this.gifs.slice()
 		this.sortDirection[this.currentCriteria]=-1
-		this.sortBy(this.currentCriteria)
+		this.filterList()
+		this.sortList(this.currentCriteria)
 	},
+	created() {
+		window.addEventListener('scroll', this.handleScroll);
+	}
 }
 
 </script>
