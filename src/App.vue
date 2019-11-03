@@ -4,7 +4,7 @@
 		<img id="banniere" src="./assets/titre.png" />
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
-	<div class="container">
+	<div class="container" id="containerBoutons">
 		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
 		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
@@ -462,6 +462,9 @@ body{
 }
 .tagActif>.nbGifTag,.themeActif>.nbGifTheme,.themeActif>.nbGifTheme{
 	color:#bbb
+}
+containerBoutons{
+	margin-bottom:10px;
 }
 .btn.disabled{
 	cursor:pointer;
