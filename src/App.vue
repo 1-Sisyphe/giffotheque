@@ -129,7 +129,7 @@ export default {
 			for(var i=0;i<firstIndex;i++){
 				this.displayedGifs.push(this.gifsToDisplay[i])
 			}
-			//this.$nextTick(() => this.$redrawVueMasonry());
+			this.$nextTick(() => this.$redrawVueMasonry());
 		},
 		filterList: function () {
 			var filteredGifs = this.gifs.slice()
