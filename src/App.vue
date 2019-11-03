@@ -6,14 +6,14 @@
 	</div>
 	<div class="container">
 		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer ({{gifsToDisplay.length}})</a><br>
-		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortList('date')" v-bind:class="{ disabled: currentCriteria!='date' }">
+		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
-		<a id="triKarma" href="#" class="btn hoverable btnTri" v-on:click="sortList('karma')" v-bind:class="{ disabled: currentCriteria!='karma' }">
+		<a id="triKarma" href="#" class="btn hoverable btnTri" v-on:click="sortList('karma',true)" v-bind:class="{ disabled: currentCriteria!='karma' }">
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 		<!--<div id="wrapTri">
-			<a id="triComments" href="#" class="btn hoverable btnTri" v-on:click="sortList('comments')" v-bind:class="{ disabled: currentCriteria!='comments' }">
+			<a id="triComments" href="#" class="btn hoverable btnTri" v-on:click="sortList('comments',true)" v-bind:class="{ disabled: currentCriteria!='comments' }">
 				<i class="material-icons right">{{iconSortBy('comments')}}</i>Commentaires
 			</a>
 		</div>-->
@@ -83,10 +83,10 @@ export default {
 	computed: {
 	},
 	methods: {
-        sortList: function (criteria) {
-			criteria = criteria||this.currentCriteria 
-            if(criteria==this.currentCriteria)this.sortDirection[criteria] = -this.sortDirection[criteria]
-            this.currentCriteria = criteria||this.currentCriteria 
+        sortList: function (criteria,swapOrder) {
+		
+            if(criteria==this.currentCriteria&&swapOrder)this.sortDirection[criteria] = -this.sortDirection[criteria]
+            this.currentCriteria = criteria
             var direction = this.sortDirection[this.currentCriteria]
             this.gifsToDisplay = this.gifsToDisplay.sort(function(a, b) {
                 return direction*(b[criteria] - a[criteria]);
@@ -122,7 +122,7 @@ export default {
 			for(var i=0;i<firstIndex;i++){
 				this.displayedGifs.push(this.gifsToDisplay[i])
 			}
-			this.sortList()
+			this.sortList(this.currentCriteria,false)
 		},
 		selectAuthor:function(aut){
 			if(this.selectedAuthors.indexOf(aut)==-1){
@@ -242,6 +242,9 @@ body{
 	background:rgb(0, 0, 0);
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
+}
+.side-nav{
+	height:100%;
 }
 #wrapFramable{
 	position:fixed;
