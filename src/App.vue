@@ -260,8 +260,8 @@ export default {
 			}
 		},
 		handleScroll() {
-			let scrollHeight = window.scrollY
-			let maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
+			var scrollHeight = window.scrollY
+			var maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
 
 			if (scrollHeight >= maxHeight - 200) {
 				this.getGifsChunk()
@@ -471,7 +471,7 @@ body{
 }
 .btnTri{
 	background:#ba3c07;
-	width:140px
+	width:150px
 }
 .btnTri:hover{
 	background:#dc5116
