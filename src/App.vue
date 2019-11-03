@@ -84,8 +84,9 @@ export default {
 	},
 	methods: {
         sortList: function (criteria) {
+			criteria = criteria||this.currentCriteria 
             if(criteria==this.currentCriteria)this.sortDirection[criteria] = -this.sortDirection[criteria]
-            this.currentCriteria = criteria
+            this.currentCriteria = criteria||this.currentCriteria 
             var direction = this.sortDirection[this.currentCriteria]
             this.gifsToDisplay = this.gifsToDisplay.sort(function(a, b) {
                 return direction*(b[criteria] - a[criteria]);
@@ -121,6 +122,7 @@ export default {
 			for(var i=0;i<firstIndex;i++){
 				this.displayedGifs.push(this.gifsToDisplay[i])
 			}
+			this.sortList()
 		},
 		selectAuthor:function(aut){
 			if(this.selectedAuthors.indexOf(aut)==-1){
@@ -212,7 +214,6 @@ export default {
 		this.gifsToDisplay = this.gifs.slice()
 		this.sortDirection[this.currentCriteria]=-1
 		this.filterList()
-		this.sortList(this.currentCriteria)
 	},
 	created() {
 		window.addEventListener('scroll', this.handleScroll);
