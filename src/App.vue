@@ -5,18 +5,13 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container">
-		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable"><i class="material-icons left">menu</i>Filtrer</a><br>
-		<a id="triDate" href="#" class="btn hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
+		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
+		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
-		<a id="triKarma" href="#" class="btn hoverable btnTri" v-on:click="sortList('karma',true)" v-bind:class="{ disabled: currentCriteria!='karma' }">
+		<a id="triKarma" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('karma',true)" v-bind:class="{ disabled: currentCriteria!='karma' }">
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
-		<!--<div id="wrapTri">
-			<a id="triComments" href="#" class="btn hoverable btnTri" v-on:click="sortList('comments',true)" v-bind:class="{ disabled: currentCriteria!='comments' }">
-				<i class="material-icons right">{{iconSortBy('comments')}}</i>Commentaires
-			</a>
-		</div>-->
 	</div>
 	<div id="slide-out" class="side-nav">
 		<span id="nbGigsSelected">{{textNbGifs()}}</span>
@@ -482,6 +477,7 @@ body{
 	vertical-align:middle;
 	background-color:#ba3c07;
 	float:right;
+	width:160px;
 }
 #menuBtn:hover{
 	background-color:#dc5116;
