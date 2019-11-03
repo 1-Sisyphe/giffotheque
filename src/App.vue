@@ -84,7 +84,7 @@ export default {
 	},
 	methods: {
         sortList: function (criteria,swapOrder) {
-		
+			
             if(criteria==this.currentCriteria&&swapOrder)this.sortDirection[criteria] = -this.sortDirection[criteria]
             this.currentCriteria = criteria
             var direction = this.sortDirection[this.currentCriteria]
@@ -212,7 +212,6 @@ export default {
 	},
 	mounted: function(){
 		this.gifsToDisplay = this.gifs.slice()
-		this.sortDirection[this.currentCriteria]=-1
 		this.filterList()
 	},
 	created() {
