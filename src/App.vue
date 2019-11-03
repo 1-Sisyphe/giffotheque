@@ -76,12 +76,13 @@
 		</div>
 		<embed v-bind:src="currentFramableLink" id="framableObj">
 	</div>
+	<div class="loader" v-if="loading"></div>
 </div>
 </template>
 
 <script>
 import GifCards from '@/components/GifCards.vue'
-import gifs from '@/assets/reddit_data.json'
+import axios from "axios";
 
 export default {
 	name: 'app',
@@ -90,7 +91,7 @@ export default {
 	},
 	data() {
 		return {
-			gifs: gifs,
+			gifs: [],
 			gifsToDisplay : [],
 			displayedGifs : [],
 			gifsChunkLength : 16,
@@ -110,7 +111,8 @@ export default {
 			selectedSources:[],
 			selectedAuthors:[],
 			currentFramableLink:"",
-			framableVisible : false
+			framableVisible : false,
+			loading:true
 		}
 	}, 
 	computed: {
@@ -272,63 +274,64 @@ export default {
 		}
     },
 	beforeMount() {
-		for(var i=0; i<this.gifs.length; i++){
-			if(this.gifs[i]['customThumbnail']!==undefined){
-				if(this.gifs[i]['customThumbnail']!=""){
-					this.gifs[i]['preview'] = this.gifs[i]['customThumbnail']
-				}
-			}
-			if(this.gifs[i]['customFramableLink']!==undefined){
-				if(this.gifs[i]['customFramableLink']!=""){
-					this.gifs[i]['framableLink'] = this.gifs[i]['customFramableLink']
-				}
-			}
-			if(this.gifs[i]['gildings']===undefined){
-				this.gifs[i]['gildings'] = {}
-			}
-			if(this.authors[this.gifs[i]['author']]===undefined){
-				this.authors[this.gifs[i]['author']] = 1
-			}else{
-				this.authors[this.gifs[i]['author']]++
-			}
-			if(this.gifs[i]['tags']==undefined)this.gifs[i]['tags'] = []
-			for(var j=0;j<this.gifs[i]['tags'].length;j++){
-				if(this.tags[this.gifs[i]['tags'][j]]===undefined){
-					this.tags[this.gifs[i]['tags'][j]] = 1
-				}else{
-					this.tags[this.gifs[i]['tags'][j]]++
-				}
-			}
-
-			if(this.gifs[i]['themes']==undefined)this.gifs[i]['themes'] = []
-			for(var k=0;k<this.gifs[i]['themes'].length;k++){
-				if(this.themes[this.gifs[i]['themes'][k]]===undefined){
-					this.themes[this.gifs[i]['themes'][k]] = 1
-				}else{
-					this.themes[this.gifs[i]['themes'][k]]++
-				}
-			}
-			
-			
-			
-			if(this.gifs[i]['sources']==undefined)this.gifs[i]['sources'] = []
-			for(var l=0;l<this.gifs[i]['sources'].length;l++){
-				if(this.sources[this.gifs[i]['sources'][l]]===undefined){
-					this.sources[this.gifs[i]['sources'][l]] = 1
-				}else{
-					this.sources[this.gifs[i]['sources'][l]]++
-				}
-			}
-
-
-
-
-
-		}
+		
+		
 	},
 	mounted: function(){
-		this.gifsToDisplay = this.gifs.slice()
-		this.filterList()
+		axios({ method: "GET", "url": "http://134.209.226.72:5000/api/gifs" }).then(result => {
+			this.gifs = result.data;
+			for(var i=0; i<this.gifs.length; i++){
+				if(this.gifs[i]['customThumbnail']!==undefined){
+					if(this.gifs[i]['customThumbnail']!=""){
+						this.gifs[i]['preview'] = this.gifs[i]['customThumbnail']
+					}
+				}
+				if(this.gifs[i]['customFramableLink']!==undefined){
+					if(this.gifs[i]['customFramableLink']!=""){
+						this.gifs[i]['framableLink'] = this.gifs[i]['customFramableLink']
+					}
+				}
+				if(this.gifs[i]['gildings']===undefined){
+					this.gifs[i]['gildings'] = {}
+				}
+				if(this.authors[this.gifs[i]['author']]===undefined){
+					this.authors[this.gifs[i]['author']] = 1
+				}else{
+					this.authors[this.gifs[i]['author']]++
+				}
+				if(this.gifs[i]['tags']==undefined)this.gifs[i]['tags'] = []
+				for(var j=0;j<this.gifs[i]['tags'].length;j++){
+					if(this.tags[this.gifs[i]['tags'][j]]===undefined){
+						this.tags[this.gifs[i]['tags'][j]] = 1
+					}else{
+						this.tags[this.gifs[i]['tags'][j]]++
+					}
+				}
+
+				if(this.gifs[i]['themes']==undefined)this.gifs[i]['themes'] = []
+				for(var k=0;k<this.gifs[i]['themes'].length;k++){
+					if(this.themes[this.gifs[i]['themes'][k]]===undefined){
+						this.themes[this.gifs[i]['themes'][k]] = 1
+					}else{
+						this.themes[this.gifs[i]['themes'][k]]++
+					}
+				}
+				
+				
+				
+				if(this.gifs[i]['sources']==undefined)this.gifs[i]['sources'] = []
+				for(var l=0;l<this.gifs[i]['sources'].length;l++){
+					if(this.sources[this.gifs[i]['sources'][l]]===undefined){
+						this.sources[this.gifs[i]['sources'][l]] = 1
+					}else{
+						this.sources[this.gifs[i]['sources'][l]]++
+					}
+				}
+			}
+			this.gifsToDisplay = this.gifs.slice()
+			this.filterList()
+			this.loading = false
+		});
 	},
 	created() {
 		window.addEventListener('scroll', this.handleScroll);
@@ -352,6 +355,23 @@ div {
   body {
      font-size: 16px;
   }
+}
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  position:fixed;
+  top:calc(50% - 60px);
+  left:calc(50% - 60px);
+  z-index:1;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 body{
 	background:rgb(0, 0, 0);
