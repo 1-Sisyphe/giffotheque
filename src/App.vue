@@ -188,10 +188,6 @@ export default {
 		tagIsSelected(tag){
 			return this.selectedTags.indexOf(tag)!=-1
 		},
-
-
-
-
 		selectTheme:function(theme){
 			if(this.selectedThemes.indexOf(theme)==-1){
 				this.selectedThemes.push(theme)
@@ -203,9 +199,6 @@ export default {
 		themeIsSelected(theme){
 			return this.selectedThemes.indexOf(theme)!=-1
 		},
-
-
-
 		selectSource:function(source){
 			if(this.selectedSources.indexOf(source)==-1){
 				this.selectedSources.push(source)
@@ -217,8 +210,6 @@ export default {
 		sourceIsSelected(source){
 			return this.selectedSources.indexOf(source)!=-1
 		},
-
-
 		authorIsSelected(aut){
 			return this.selectedAuthors.indexOf(aut)!=-1
 		},
@@ -265,6 +256,14 @@ export default {
 
 			if (scrollHeight >= maxHeight - 200) {
 				this.getGifsChunk()
+			}
+			if (scrollHeight < 200) {
+				this.currentPage = 1
+				this.displayedGifs = []
+				var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+				for(var i=0;i<firstIndex;i++){
+					this.displayedGifs.push(this.gifsToDisplay[i])
+				}
 			}
 		}
     },
