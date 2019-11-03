@@ -335,14 +335,14 @@ export default {
 
 </script>
 <style>
-@media screen and (max-width: 993px) {
-  body {
-     font-size: 12px;
+@media screen and (max-width: 793px) {
+  #slogan {
+     font-size: 10px;
   }
 }
 @media screen and (min-width: 1200px) {
-  body {
-     font-size: 20px;
+  #slogan {
+     font-size: 17px;
   }
 }
 .loader {
@@ -366,6 +366,7 @@ body{
 	background:rgb(0, 0, 0);
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
+	font-size:20px;
 }
 #nbGigsSelected{
 	color:#dc5116;
@@ -415,7 +416,6 @@ body{
 	bottom:-2px;
 	right:2px;
 	font-style:italic;
-	font-size:1em;
 }
 #slide-out{
 	color:black;
@@ -497,6 +497,16 @@ body{
 .gif{
 	margin-bottom:10px;
 }
+@media screen and (max-width: 993px) {
+	.gif {
+		font-size: 17px;
+	}
+}
+@media screen and (min-width: 994px) {
+	.gif {
+		font-size: 21px;
+	}
+}
 .gifContent{
 	margin-top:10px;
 	background-color:#2a2727;
@@ -508,13 +518,14 @@ body{
 	
 }
 .gifTitle{
-	font-size:1.5em;
 	font-weight:bold;
-	line-height:1.15em;
+	line-height:1em;
 	text-align:left;
 	color:#af5734;
-	margin-bottom:3px
+	margin-bottom:3px;
+	font-size:1.2em;
 }
+
 .gifPreview{
 	width:100%;
 	cursor:pointer;
@@ -522,11 +533,12 @@ body{
 .gifDescription{
 	font-style:italic;
 	text-align:left;
-	font-size:1.1em;
 	line-height:1.15em;
+	font-size:0.8em;
 }
 .gifData{
 	text-align:right;
+	font-size:0.8em;
 }
 .gildings{
 	position:absolute;
