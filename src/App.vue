@@ -463,7 +463,7 @@ body{
 .tagActif>.nbGifTag,.themeActif>.nbGifTheme,.themeActif>.nbGifTheme{
 	color:#bbb
 }
-containerBoutons{
+#containerBoutons{
 	margin-bottom:10px;
 }
 .btn.disabled{
