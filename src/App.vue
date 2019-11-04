@@ -34,7 +34,7 @@
 		</div>
 		<hr>
 		<i v-on:click="clearTags('sources')" v-if="selectedSources.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Source</h3>
+		<h3 class="categoryTags">Origine</h3>
 		<div id="wrapSources">
 			<div class="col s12 m6 l4 source"  v-for="(nb,source) in sources" :key="source" v-on:click="selectSource(source)" v-bind:class="{ sourceActif: sourceIsSelected(source) }">
 				{{source}} <span class="nbGifSource">({{nb}})</span>
@@ -42,7 +42,7 @@
 		</div>
 		<hr>
 		<i v-on:click="clearTags('authors')" v-if="selectedAuthors.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Auteurs </h3>
+		<h3 class="categoryTags">Auteurs</h3>
 		<div id="wrapAuteurs">
 			<div class="col s12 m6 l4 tag"  v-for="(nb,author) in authors" :key="author" v-on:click="selectAuthor(author)" v-bind:class="{ tagActif: authorIsSelected(author) }">
 				{{author}} <span class="nbGifTag">({{nb}})</span>
@@ -97,7 +97,8 @@ export default {
 			currentFramableLink:"",
 			framableVisible : false,
 			loading:true,
-			scrolling:false
+			scrolling:false,
+			autoScrolling:false
 		}
 	}, 
 	computed: {
@@ -240,33 +241,42 @@ export default {
 				this.displayedGifs.push(this.gifsToDisplay[i])
 			}
 		},
-		handleScroll() {
-			var scrollHeight = window.scrollY
-			var maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
+		handleScroll(endOfAutoScroll) {
+			if(!this.autoScrolling||endOfAutoScroll){
+				var scrollHeight = window.scrollY
+				var maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
 
-			if (scrollHeight >= maxHeight - 200) {
-				this.getGifsChunk()
-			}
-			if (scrollHeight < 200) {
-				this.scrolling = false
-				this.currentPage = 1
-				this.displayedGifs = []
-				var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
-				for(var i=0;i<firstIndex;i++){
-					this.displayedGifs.push(this.gifsToDisplay[i])
+				if (scrollHeight >= maxHeight - 200) {
+					this.getGifsChunk()
 				}
-			}else{
-				this.scrolling = true
+				if (scrollHeight < 200) {
+					this.scrolling = false
+					this.currentPage = 1
+					this.displayedGifs = []
+					var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+					for(var i=0;i<firstIndex;i++){
+						this.displayedGifs.push(this.gifsToDisplay[i])
+					}
+				}else{
+					this.scrolling = true
+				}
+				this.autoScrolling = false
 			}
 		},
 		toTop(){
+			this.autoScrolling = true
 			var scrollDuration = 200
 			var scrollStep = -window.scrollY / (scrollDuration / 15)
+			var callback = this.handleScroll()
 			var scrollInterval = setInterval(function(){
 				if ( window.scrollY != 0 ) {
-					window.scrollBy( 0, scrollStep );
+					window.scrollBy( 0, scrollStep )
 				}
-				else clearInterval(scrollInterval); 
+				else{
+					clearInterval(scrollInterval)
+					
+					callback(true)
+				}
 			},15);
 		}
     },
