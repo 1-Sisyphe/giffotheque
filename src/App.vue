@@ -1,5 +1,6 @@
 <template>
 <div id="app">
+	<div id="toTop" v-if="scrolling" v-on:click="toTop()" style="z-index:1; position:fixed; top:20px;right:20px"><i class="material-icons left">arrow_upward</i></div>
 	<div class="container-fluid" id="containerBanniere">
 		<img id="banniere" src="./assets/titre.png" />
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
@@ -15,12 +16,7 @@
 	</div>
 	<div id="slide-out" class="side-nav">
 		<span id="nbGigsSelected">{{textNbGifs()}}</span>
-		
 		<hr>
-		
-		
-		
-		
 		<i v-on:click="clearTags('tags')" v-if="selectedTags.length!=0" class="material-icons right clearTags">clear</i><br>
 		<h3 class="categoryTags">Mots-clés</h3>
 		<div id="wrapTags">
@@ -29,8 +25,6 @@
 			</div>
 		</div>
 		<hr>
-		
-		
 		<i v-on:click="clearTags('themes')" v-if="selectedThemes.length!=0" class="material-icons right clearTags">clear</i><br>
 		<h3 class="categoryTags">Thèmes</h3>
 		<div id="wrapThemes">
@@ -39,7 +33,6 @@
 			</div>
 		</div>
 		<hr>
-		
 		<i v-on:click="clearTags('sources')" v-if="selectedSources.length!=0" class="material-icons right clearTags">clear</i><br>
 		<h3 class="categoryTags">Source</h3>
 		<div id="wrapSources">
@@ -48,8 +41,6 @@
 			</div>
 		</div>
 		<hr>
-		
-		
 		<i v-on:click="clearTags('authors')" v-if="selectedAuthors.length!=0" class="material-icons right clearTags">clear</i><br>
 		<h3 class="categoryTags">Auteurs </h3>
 		<div id="wrapAuteurs">
@@ -58,8 +49,6 @@
 			</div>
 		</div>
 		<hr>
-
-		
 		<br>
 	</div>
 	<div class="container">
@@ -107,7 +96,8 @@ export default {
 			selectedAuthors:[],
 			currentFramableLink:"",
 			framableVisible : false,
-			loading:true
+			loading:true,
+			scrolling:false
 		}
 	}, 
 	computed: {
@@ -258,13 +248,26 @@ export default {
 				this.getGifsChunk()
 			}
 			if (scrollHeight < 200) {
+				this.scrolling = false
 				this.currentPage = 1
 				this.displayedGifs = []
 				var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
 				for(var i=0;i<firstIndex;i++){
 					this.displayedGifs.push(this.gifsToDisplay[i])
 				}
+			}else{
+				this.scrolling = true
 			}
+		},
+		toTop(){
+			var scrollDuration = 200
+			var scrollStep = -window.scrollY / (scrollDuration / 15)
+			var scrollInterval = setInterval(function(){
+				if ( window.scrollY != 0 ) {
+					window.scrollBy( 0, scrollStep );
+				}
+				else clearInterval(scrollInterval); 
+			},15);
 		}
     },
 	beforeMount() {
@@ -368,6 +371,13 @@ body{
 	font-size:20px;
 }
 #nbGigsSelected{
+	color:#dc5116;
+}
+#toTop{
+	color:#ba3c07;
+	cursor:pointer;
+}
+#toTop:hover{
 	color:#dc5116;
 }
 #wrapFramable{
