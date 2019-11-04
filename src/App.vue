@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-	<div id="toTop" v-if="scrolling" v-on:click="toTop()" style="z-index:1; position:fixed; top:20px;right:20px"><i class="material-icons left">arrow_upward</i></div>
+	<div id="toTop" v-if="scrolling" v-on:click="toTop()"><i class="material-icons left">arrow_upward</i></div>
 	<div class="container-fluid" id="containerBanniere">
 		<img id="banniere" src="./assets/titre.png" />
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
@@ -376,6 +376,10 @@ body{
 #toTop{
 	color:#ba3c07;
 	cursor:pointer;
+	z-index:1;
+	position:fixed;
+	top:20px;
+	right:20px
 }
 #toTop:hover{
 	color:#dc5116;
@@ -435,6 +439,7 @@ body{
 	width:500px;
 	max-width:80vw;
 	height:100%;
+	font-size:18px
 }
 .categoryTags{
 	color:#dc5116;
@@ -453,10 +458,10 @@ body{
 }
 .tag,.theme,.source{
 	display:inline-block;
-	margin:2px 5px;
-	border-radius:4px;
+	margin:0.1em 0.2em;
+	border-radius:0.2em;
 	cursor:pointer;
-	padding:5px 10px;
+	padding:0.2em 0.4em;
 	font-size:1.2em;
 	background:#222;
 	border:solid grey 2px;
@@ -499,7 +504,7 @@ body{
 }
 #wrapTags,#wrapThemes,#wrapSources,#wrapAuteurs,#wrapTrier{
 	text-align:center;
-	margin-bottom:30px;
+	margin-bottom:1.1em;
 }
 #gifs {
 }
@@ -509,6 +514,17 @@ body{
 @media screen and (max-width: 993px) {
 	.gif {
 		font-size: 17px;
+	}
+	.btnTri{
+		font-size:17px;
+		line-height:36px;
+		height:36px;
+	}
+	#slide-out{
+		font-size:13px;
+	}
+	#toTop{
+		right:0px
 	}
 }
 @media screen and (min-width: 994px) {
