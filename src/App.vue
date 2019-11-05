@@ -19,7 +19,7 @@
 			<span id="nbGigsSelected">{{textNbGifs()}}</span>
 			<hr>
 			<span  v-for="filterCategory in filterCategories" :key="filterCategory.name">
-				<i v-on:click="clearFilters(filterCategory.list)" v-if="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
+				<i v-on:click="clearFilters(filterCategory.id)" v-if="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
 				<h3 class="categoryFilters">{{filterCategory.name}}</h3>
 				<div class="wrapFilters">
 					<div class="filter" v-for="(nb,filter) in filterCategory.list" :key="filter" v-on:click="selectFilter(filterCategory.selectedList,filter)" v-bind:class="{ filterActif: filterIsSelected(filterCategory.selectedList,filter) }">
@@ -84,10 +84,10 @@ export default {
 	computed: {
 		filterCategories(){
 			return [
-				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés"},
-				{"selectedList":this.selectedThemes,"list":this.themes,"name":"Thèmes"},
-				{"selectedList":this.selectedSources,"list":this.sources,"name":"Source"},
-				{"selectedList":this.selectedAuthors,"list":this.authors,"name":"Auteurs"}
+				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés",id:"tags"},
+				{"selectedList":this.selectedThemes,"list":this.themes,"name":"Thèmes",id:"themes"},
+				{"selectedList":this.selectedSources,"list":this.sources,"name":"Source",id:"sources"},
+				{"selectedList":this.selectedAuthors,"list":this.authors,"name":"Auteurs",id:"authors"}
 			]
 		}
 	},
