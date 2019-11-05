@@ -6,7 +6,7 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container" id="containerBoutons">
-		<a id="menuBtn" href="#" data-activates="slide-out" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
+		<a id="menuBtn" href="#" @click="active=!active" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
 		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
@@ -14,49 +14,29 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-	<div id="slide-out" class="side-nav">
-		<span id="nbGigsSelected">{{textNbGifs()}}</span>
-		<hr>
-		<i v-on:click="clearTags('tags')" v-if="selectedTags.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Mots-clés</h3>
-		<div id="wrapTags">
-			<div class="col s12 m6 l4 tag"  v-for="(nb,tag) in tags" :key="tag" v-on:click="selectTag(tag)" v-bind:class="{ tagActif: tagIsSelected(tag) }">
-				{{tag}} <span class="nbGifTag">({{nb}})</span>
-			</div>
+    <vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
+		<div id="wrapSideBar">
+			<span id="nbGigsSelected">{{textNbGifs()}}</span>
+			<hr>
+			<span  v-for="filterCategory in filterCategories" :key="filterCategory.name">
+				<i v-on:click="clearFilters(filterCategory.list)" v-if="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
+				<h3 class="categoryFilters">{{filterCategory.name}}</h3>
+				<div class="wrapFilters">
+					<div class="filter" v-for="(nb,filter) in filterCategory.list" :key="filter" v-on:click="selectFilter(filterCategory.selectedList,filter)" v-bind:class="{ filterActif: filterIsSelected(filterCategory.selectedList,filter) }">
+						{{filter}} <span class="nbGifFilter">({{nb}})</span>
+					</div>
+				</div>
+				<hr>
+			</span>
+			<br>
 		</div>
-		<hr>
-		<i v-on:click="clearTags('themes')" v-if="selectedThemes.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Thèmes</h3>
-		<div id="wrapThemes">
-			<div class="col s12 m6 l4 theme"  v-for="(nb,theme) in themes" :key="theme" v-on:click="selectTheme(theme)" v-bind:class="{ themeActif: themeIsSelected(theme) }">
-				{{theme}} <span class="nbGifTheme">({{nb}})</span>
-			</div>
-		</div>
-		<hr>
-		<i v-on:click="clearTags('sources')" v-if="selectedSources.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Origine</h3>
-		<div id="wrapSources">
-			<div class="col s12 m6 l4 source"  v-for="(nb,source) in sources" :key="source" v-on:click="selectSource(source)" v-bind:class="{ sourceActif: sourceIsSelected(source) }">
-				{{source}} <span class="nbGifSource">({{nb}})</span>
-			</div>
-		</div>
-		<hr>
-		<i v-on:click="clearTags('authors')" v-if="selectedAuthors.length!=0" class="material-icons right clearTags">clear</i><br>
-		<h3 class="categoryTags">Auteurs</h3>
-		<div id="wrapAuteurs">
-			<div class="col s12 m6 l4 tag"  v-for="(nb,author) in authors" :key="author" v-on:click="selectAuthor(author)" v-bind:class="{ tagActif: authorIsSelected(author) }">
-				{{author}} <span class="nbGifTag">({{nb}})</span>
-			</div>
-		</div>
-		<hr>
-		<br>
-	</div>
+    </vs-sidebar>
 	<div class="container">
 		<gif-cards :gifs="displayedGifs" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
 	</div>
 	<div id="wrapFramable" v-on:click="framableVisible=false" v-if="framableVisible">
 		<div id="wrapCloseFramable">
-			<i class="material-icons right clearTags" id="closeFramable">clear</i>
+			<i class="material-icons right clearFilters" id="closeFramable">clear</i>
 		</div>
 		<embed v-bind:src="currentFramableLink" id="framableObj">
 	</div>
@@ -87,21 +67,29 @@ export default {
             },
             currentCriteria:"date",
 			authors : {},
+			selectedAuthors:[],
 			tags:{},
 			selectedTags:[],
 			themes:{},
 			selectedThemes:[],
 			sources:{},
 			selectedSources:[],
-			selectedAuthors:[],
 			currentFramableLink:"",
 			framableVisible : false,
 			loading:true,
 			scrolling:false,
-			autoScrolling:false
+			active:false
 		}
 	}, 
 	computed: {
+		filterCategories(){
+			return [
+				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés"},
+				{"selectedList":this.selectedThemes,"list":this.themes,"name":"Thèmes"},
+				{"selectedList":this.selectedSources,"list":this.sources,"name":"Source"},
+				{"selectedList":this.selectedAuthors,"list":this.authors,"name":"Auteurs"}
+			]
+		}
 	},
 	methods: {
         sortList: function (criteria,swapOrder) {
@@ -122,35 +110,25 @@ export default {
 		filterList: function () {
 			var filteredGifs = this.gifs.slice()
 			var authors = this.selectedAuthors
-			if(authors.length!=0){
-				filteredGifs = filteredGifs.filter(function(a){
-					return authors.indexOf(a['author'])!=-1
-				})
-			}
 			var tags = this.selectedTags
-			if(tags.length!=0){
-				filteredGifs = filteredGifs.filter(function(a){
-					for(var i = 0;i<tags.length;i++){
-						if(a['tags'].indexOf(tags[i])!=-1) return true
-					}
-				})
-			}
 			var themes = this.selectedThemes
-			if(themes.length!=0){
-				filteredGifs = filteredGifs.filter(function(a){
-					for(var i = 0;i<themes.length;i++){
-						if(a['themes'].indexOf(themes[i])!=-1) return true
-					}
-				})
-			}
 			var sources = this.selectedSources
-			if(sources.length!=0){
-				filteredGifs = filteredGifs.filter(function(a){
-					for(var i = 0;i<sources.length;i++){
-						if(a['sources'].indexOf(sources[i])!=-1) return true
-					}
-				})
-			}
+			filteredGifs = filteredGifs.filter(function(a){
+				var authorMatch = authors.indexOf(a['author'])!=-1||authors.length==0
+				var tagMatch = tags.length==0
+				for(var itag = 0;itag<tags.length;itag++){
+					tagMatch = tagMatch||a['tags'].indexOf(tags[itag])!=-1
+				}
+				var themeMatch = themes.length==0
+				for(var itheme = 0;itheme<themes.length;itheme++){
+					themeMatch = themeMatch||a['themes'].indexOf(themes[itheme])!=-1
+				}
+				var sourceMatch = sources.length==0
+				for(var isource = 0;isource<sources.length;isource++){
+					sourceMatch = sourceMatch||a['sources'].indexOf(sources[isource])!=-1
+				}
+				return authorMatch&&tagMatch&&themeMatch&&sourceMatch
+			})
 			this.gifsToDisplay = filteredGifs
 			this.currentPage = 1
 			this.displayedGifs = []
@@ -160,49 +138,16 @@ export default {
 			}
 			this.sortList(this.currentCriteria,false)
 		},
-		selectAuthor:function(aut){
-			if(this.selectedAuthors.indexOf(aut)==-1){
-				this.selectedAuthors.push(aut)
+		selectFilter:function(list,value){
+			if(list.indexOf(value)==-1){
+				list.push(value)
 			}else{
-				this.selectedAuthors.splice(this.selectedAuthors.indexOf(aut),1)
+				list.splice(list.indexOf(value),1)
 			}
 			this.filterList()
 		},
-		selectTag:function(tag){
-			if(this.selectedTags.indexOf(tag)==-1){
-				this.selectedTags.push(tag)
-			}else{
-				this.selectedTags.splice(this.selectedTags.indexOf(tag),1)
-			}
-			this.filterList()
-		},
-		tagIsSelected(tag){
-			return this.selectedTags.indexOf(tag)!=-1
-		},
-		selectTheme:function(theme){
-			if(this.selectedThemes.indexOf(theme)==-1){
-				this.selectedThemes.push(theme)
-			}else{
-				this.selectedThemes.splice(this.selectedThemes.indexOf(theme),1)
-			}
-			this.filterList()
-		},
-		themeIsSelected(theme){
-			return this.selectedThemes.indexOf(theme)!=-1
-		},
-		selectSource:function(source){
-			if(this.selectedSources.indexOf(source)==-1){
-				this.selectedSources.push(source)
-			}else{
-				this.selectedSources.splice(this.selectedSources.indexOf(source),1)
-			}
-			this.filterList()
-		},
-		sourceIsSelected(source){
-			return this.selectedSources.indexOf(source)!=-1
-		},
-		authorIsSelected(aut){
-			return this.selectedAuthors.indexOf(aut)!=-1
+		filterIsSelected(list,value){
+			return list.indexOf(value)!=-1
 		},
 		iconSortBy(btn){
 			if(btn!=this.currentCriteria){
@@ -211,7 +156,7 @@ export default {
 				return (this.sortDirection[btn]==1 ? "expand_more" : "expand_less")
 			}
 		},
-		clearTags(type){
+		clearFilters(type){
 			if(type=="tags")this.selectedTags = []
 			if(type=="themes")this.selectedThemes = []
 			if(type=="sources")this.selectedSources = []
@@ -241,48 +186,40 @@ export default {
 				this.displayedGifs.push(this.gifsToDisplay[i])
 			}
 		},
-		handleScroll(endOfAutoScroll) {
-			if(!this.autoScrolling||endOfAutoScroll){
-				var scrollHeight = window.scrollY
-				var maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
+		handleScroll() {
+			var scrollHeight = window.scrollY
+			var maxHeight = window.document.body.scrollHeight - window.document.documentElement.clientHeight
 
-				if (scrollHeight >= maxHeight - 200) {
-					this.getGifsChunk()
+			if (scrollHeight >= maxHeight - 200) {
+				this.getGifsChunk()
+			}
+			if (scrollHeight < 200) {
+				this.scrolling = false
+				this.currentPage = 1
+				this.displayedGifs = []
+				var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+				for(var i=0;i<firstIndex;i++){
+					this.displayedGifs.push(this.gifsToDisplay[i])
 				}
-				if (scrollHeight < 200) {
-					this.scrolling = false
-					this.currentPage = 1
-					this.displayedGifs = []
-					var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
-					for(var i=0;i<firstIndex;i++){
-						this.displayedGifs.push(this.gifsToDisplay[i])
-					}
-				}else{
-					this.scrolling = true
-				}
-				this.autoScrolling = false
+			}else{
+				this.scrolling = true
 			}
 		},
 		toTop(){
-			this.autoScrolling = true
-			var scrollDuration = 200
-			var scrollStep = -window.scrollY / (scrollDuration / 15)
-			var callback = this.handleScroll()
-			var scrollInterval = setInterval(function(){
-				if ( window.scrollY != 0 ) {
-					window.scrollBy( 0, scrollStep )
+			window.scrollTo(0,0)
+		},
+		prepareList(gif,list){
+			if(gif[list]==undefined)gif[list] = []
+			for(var i=0;i<gif[list].length;i++){
+				if(this[list][gif[list][i]]===undefined){
+					this[list][gif[list][i]] = 1
+				}else{
+					this[list][gif[list][i]]++
 				}
-				else{
-					clearInterval(scrollInterval)
-					
-					callback(true)
-				}
-			},15);
+			}
 		}
     },
 	beforeMount() {
-		
-		
 	},
 	mounted: function(){
 		axios({ method: "GET", "url": "http://134.209.226.72:5000/api/gifs" }).then(result => {
@@ -306,34 +243,9 @@ export default {
 				}else{
 					this.authors[this.gifs[i]['author']]++
 				}
-				if(this.gifs[i]['tags']==undefined)this.gifs[i]['tags'] = []
-				for(var j=0;j<this.gifs[i]['tags'].length;j++){
-					if(this.tags[this.gifs[i]['tags'][j]]===undefined){
-						this.tags[this.gifs[i]['tags'][j]] = 1
-					}else{
-						this.tags[this.gifs[i]['tags'][j]]++
-					}
-				}
-
-				if(this.gifs[i]['themes']==undefined)this.gifs[i]['themes'] = []
-				for(var k=0;k<this.gifs[i]['themes'].length;k++){
-					if(this.themes[this.gifs[i]['themes'][k]]===undefined){
-						this.themes[this.gifs[i]['themes'][k]] = 1
-					}else{
-						this.themes[this.gifs[i]['themes'][k]]++
-					}
-				}
-				
-				
-				
-				if(this.gifs[i]['sources']==undefined)this.gifs[i]['sources'] = []
-				for(var l=0;l<this.gifs[i]['sources'].length;l++){
-					if(this.sources[this.gifs[i]['sources'][l]]===undefined){
-						this.sources[this.gifs[i]['sources'][l]] = 1
-					}else{
-						this.sources[this.gifs[i]['sources'][l]]++
-					}
-				}
+				this.prepareList(this.gifs[i],"tags")
+				this.prepareList(this.gifs[i],"themes")
+				this.prepareList(this.gifs[i],"sources")
 			}
 			this.gifsToDisplay = this.gifs.slice()
 			this.filterList()
@@ -357,19 +269,6 @@ export default {
      font-size: 17px;
   }
 }
-.loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-  position:fixed;
-  top:calc(50% - 60px);
-  left:calc(50% - 60px);
-  z-index:1;
-}
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -379,8 +278,10 @@ body{
 	color:#ddd;
 	font-family: 'Barlow Condensed', sans-serif;
 	font-size:20px;
+	overflow-y:scroll;
 }
 #nbGigsSelected{
+	margin-left:30px;
 	color:#dc5116;
 }
 #toTop{
@@ -440,33 +341,47 @@ body{
 	right:2px;
 	font-style:italic;
 }
-#slide-out{
-	color:black;
-	text-align:left;
-	background:#111;
-	color:#eee;
-	padding:30px;
-	width:500px;
-	max-width:80vw;
-	height:100%;
-	font-size:18px
+.vs-sidebar{
+	position:fixed!important;
+	right:0px!important;
+	top:0px!important;
+	color:black!important;
+	text-align:left!important;
+	background:#111!important;
+	color:#eee!important;
+	width:500px!important;
+	max-width:80vw!important;
 }
-.categoryTags{
+.vs-sidebar--items{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+#wrapSideBar{
+	position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -17px;
+    overflow-y: scroll;
+}
+.categoryFilters,.categoryTags{
 	color:#dc5116;
 	margin:5px;
 	margin-bottom:15px;
 	text-align:center;
 	font-size:1.8em;
 }
-.clearTags{
+.clearFilters{
 	color:#dc5116;
 	cursor:pointer;
 	margin-left:10px;
 }
-.clearTags:hover{
+.clearFilters:hover{
 	color:#ba3c07;
 }
-.tag,.theme,.source{
+.filter,.tag,.theme,.source{
 	display:inline-block;
 	margin:0.1em 0.2em;
 	border-radius:0.2em;
@@ -477,11 +392,11 @@ body{
 	border:solid grey 2px;
 	color:#dddddd;
 }
-.tagActif,.themeActif,.sourceActif{
+.filterActif,.tagActif,.themeActif,.sourceActif{
 	border:solid grey 2px;
 	background:#ba3c07;
 }
-.nbGifTag,.nbGifSource,.nbGifSource{
+.nbGifFilter,.nbGifTag,.nbGifSource,.nbGifSource{
 	color:#999
 }
 .tagActif>.nbGifTag,.themeActif>.nbGifTheme,.themeActif>.nbGifTheme{
@@ -512,19 +427,11 @@ body{
 .selectableList{
 	text-align:center;
 }
-#wrapTags,#wrapThemes,#wrapSources,#wrapAuteurs,#wrapTrier{
+.wrapFilters,#wrapTags,#wrapThemes,#wrapSources,#wrapAuteurs,#wrapTrier{
 	text-align:center;
 	margin-bottom:1.1em;
 }
-#gifs {
-}
-.gif{
-	margin-bottom:10px;
-}
 @media screen and (max-width: 993px) {
-	.gif {
-		font-size: 17px;
-	}
 	.btnTri{
 		font-size:17px;
 		line-height:36px;
@@ -537,69 +444,6 @@ body{
 		right:0px
 	}
 }
-@media screen and (min-width: 994px) {
-	.gif {
-		font-size: 21px;
-	}
-}
-.gifContent{
-	margin-top:10px;
-	background-color:#2a2727;
-	padding:10px;
-	display:block;
-	cursor:default;
-	color:#dddddd;
-	text-align:center;
-	
-}
-.gifTitle{
-	font-weight:bold;
-	line-height:1em;
-	text-align:left;
-	color:#af5734;
-	margin-bottom:3px;
-	font-size:1.2em;
-}
-
-.gifPreview{
-	width:100%;
-	cursor:pointer;
-}
-.gifDescription{
-	font-style:italic;
-	text-align:left;
-	line-height:1.15em;
-	font-size:0.8em;
-}
-.gifData{
-	text-align:right;
-	font-size:0.8em;
-}
-.gildings{
-	position:absolute;
-	background:rgba(0,0,0,0.3);
-	box-shadow: 0px 0px 2px 5px rgba(0,0,0,0.3);
-	border-radius:50% 20% / 10% 40%;
-}
-.gifDate{
-	float:right;
-	font-size:0.9em;
-	color:#9e6f5a;
-}
-.gifAuthor{
-	float:left;
-	font-size:0.9em;
-	color:#9e6f5a;
-}
-.gifKarma,.gifComments,.gifSilver,.gifGold,.gifPlatinum{
-	display:inline-block;
-	text-align:left;
-	padding-right:10px;
-	margin-top:5px;
-	font-size:1em;
-	line-height:1em;
-	vertical-align:middle;
-}
 i.left{
 	margin-right:5px;
 	font-size:1.2em;
@@ -607,39 +451,18 @@ i.left{
 #wrapTri{
 	text-align:right;
 }
-.inlineIcon{
-	display:inline;
-	vertical-align:middle;
-	height:1.3em;
-	margin-right:3px;
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  position:fixed;
+  top:calc(50% - 60px);
+  left:calc(50% - 60px);
+  z-index:1;
 }
-.gildings{
-	/*box-shadow: inset 0px 0px 40px 40px #000000;*/
-}
-.dataValeur{
-	vertical-align:middle;
-}
-.gifTitle:hover{
-	color:#bf7e64
-}
-.gifKarma>i{
-	color:#ff8b60;
-}
-.arrowKarma {
-    background-image: url("https://www.redditstatic.com/sprite-reddit.e5NqNKsOkdA.png");
-    background-position: -105px -1654px;
-    background-repeat: no-repeat;
-    margin: 2px 0px 0px 0px;
-    width: 100%;
-    height: 14px;
-    display: inline-block;
-    cursor: pointer;
-    width: 15px;
-    margin-left: auto;
-    margin-right: auto;
-    outline: none;
-	vertical-align:middle;
-	margin-right:5px;
-}
+
 
 </style>
