@@ -14,7 +14,7 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-	<vs-sidebar click-not-close parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
+	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
 		<div id="wrapSideBar">
 			<span id="nbGifsSelected">{{textNbGifs()}}</span>
 			<hr>
