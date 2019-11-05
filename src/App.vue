@@ -6,7 +6,7 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container" id="containerBoutons">
-		<a id="menuBtn" href="#" @click="active=!active" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
+		<a id="menuBtn" href="#" @click="activeMenu=!activeMenu" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
 		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
@@ -14,7 +14,7 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
+	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="activeMenu">
 		<div id="wrapSideBar">
 			<span id="nbGigsSelected">{{textNbGifs()}}</span>
 			<hr>
@@ -60,12 +60,12 @@ export default {
 			displayedGifs : [],
 			gifsChunkLength : 16,
 			currentPage : 1,
-            sortDirection:{
-                "karma":1,
-                "date":1,
-                "comments":1
-            },
-            currentCriteria:"date",
+			sortDirection:{
+				"karma":1,
+				"date":1,
+				"comments":1
+			},
+			currentCriteria:"date",
 			authors : {},
 			selectedAuthors:[],
 			tags:{},
@@ -78,7 +78,7 @@ export default {
 			framableVisible : false,
 			loading:true,
 			scrolling:false,
-			active:false
+			activeMenu:false
 		}
 	}, 
 	computed: {
@@ -92,13 +92,13 @@ export default {
 		}
 	},
 	methods: {
-        sortList: function (criteria,swapOrder) {
-            if(criteria==this.currentCriteria&&swapOrder)this.sortDirection[criteria] = -this.sortDirection[criteria]
-            this.currentCriteria = criteria
-            var direction = this.sortDirection[this.currentCriteria]
-            this.gifsToDisplay = this.gifsToDisplay.sort(function(a, b) {
-                return direction*(b[criteria] - a[criteria]);
-            })
+		sortList: function (criteria,swapOrder) {
+			if(criteria==this.currentCriteria&&swapOrder)this.sortDirection[criteria] = -this.sortDirection[criteria]
+			this.currentCriteria = criteria
+			var direction = this.sortDirection[this.currentCriteria]
+			this.gifsToDisplay = this.gifsToDisplay.sort(function(a, b) {
+				return direction*(b[criteria] - a[criteria]);
+			})
 			this.currentPage = 1
 			this.displayedGifs = []
 			var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
@@ -224,7 +224,7 @@ export default {
 				}
 			}
 		}
-    },
+	},
 	beforeMount() {
 	},
 	mounted: function(){
@@ -266,18 +266,18 @@ export default {
 </script>
 <style>
 @media screen and (max-width: 793px) {
-  #slogan {
-     font-size: 10px;
-  }
+	#slogan {
+		font-size: 10px;
+	}
 }
 @media screen and (min-width: 1200px) {
-  #slogan {
-     font-size: 17px;
-  }
+	#slogan {
+		font-size: 17px;
+	}
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }
 body{
 	background:rgb(0, 0, 0);
@@ -359,18 +359,18 @@ body{
 	max-width:80vw!important;
 }
 .vs-sidebar--items{
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
 }
 #wrapSideBar{
 	position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: -17px;
-    overflow-y: scroll;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: -17px;
+	overflow-y: scroll;
 }
 .categoryFilters,.categoryTags{
 	color:#dc5116;
@@ -458,16 +458,16 @@ i.left{
 	text-align:right;
 }
 .loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-  position:fixed;
-  top:calc(50% - 60px);
-  left:calc(50% - 60px);
-  z-index:1;
+	border: 16px solid #f3f3f3; /* Light grey */
+	border-top: 16px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+	position:fixed;
+	top:calc(50% - 60px);
+	left:calc(50% - 60px);
+	z-index:1;
 }
 
 
