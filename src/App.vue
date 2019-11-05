@@ -14,7 +14,7 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-    <vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
+	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
 		<div id="wrapSideBar">
 			<span id="nbGigsSelected">{{textNbGifs()}}</span>
 			<hr>
@@ -30,7 +30,7 @@
 			</span>
 			<br>
 		</div>
-    </vs-sidebar>
+	</vs-sidebar>
 	<div class="container">
 		<gif-cards :gifs="displayedGifs" v-on:setFramableUrlEmit="setFramableUrl($event)"/>
 	</div>
@@ -207,6 +207,12 @@ export default {
 		},
 		toTop(){
 			window.scrollTo(0,0)
+			this.displayedGifs = []
+			var firstIndex = Math.min(this.gifsToDisplay.length,this.gifsChunkLength)
+			for(var i=0;i<firstIndex;i++){
+				this.displayedGifs.push(this.gifsToDisplay[i])
+			}
+			this.$nextTick(() => this.$redrawVueMasonry());
 		},
 		prepareList(gif,list){
 			if(gif[list]==undefined)gif[list] = []
