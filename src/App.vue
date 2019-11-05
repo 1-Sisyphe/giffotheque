@@ -6,7 +6,7 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container" id="containerBoutons">
-		<a id="menuBtn" href="#" @click="activeMenu=!activeMenu" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
+		<a id="menuBtn" href="#" @click="active=!active" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
 		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
@@ -14,11 +14,11 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="activeMenu">
+	<vs-sidebar click-not-close parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
 		<div id="wrapSideBar">
-			<span id="nbGigsSelected">{{textNbGifs()}}</span>
+			<span id="nbGifsSelected">{{textNbGifs()}}</span>
 			<hr>
-			<span  v-for="filterCategory in filterCategories" :key="filterCategory.name">
+			<span v-for="filterCategory in filterCategories" :key="filterCategory.name">
 				<i v-on:click="clearFilters(filterCategory.id)" v-if="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
 				<h3 class="categoryFilters">{{filterCategory.name}}</h3>
 				<div class="wrapFilters">
@@ -78,7 +78,7 @@ export default {
 			framableVisible : false,
 			loading:true,
 			scrolling:false,
-			activeMenu:false
+			active:false
 		}
 	}, 
 	computed: {
@@ -286,7 +286,7 @@ body{
 	font-size:20px;
 	overflow-y:scroll;
 }
-#nbGigsSelected{
+#nbGifsSelected{
 	margin-left:30px;
 	color:#dc5116;
 }
