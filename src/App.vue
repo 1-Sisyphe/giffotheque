@@ -18,8 +18,8 @@
 		<div id="wrapSideBar">
 			<span id="nbGifsSelected">{{textNbGifs()}}</span>
 			<hr>
-			<span v-for="filterCategory in filterCategories" :key="filterCategory.name">
-				<i v-on:click="clearFilters(filterCategory.id)" v-if="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
+			<span v-for="filterCategory in filterCategories" :key="filterCategory.id">
+				<i v-on:click="clearFilters(filterCategory.id)" v-show="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
 				<h3 class="categoryFilters">{{filterCategory.name}}</h3>
 				<div class="wrapFilters">
 					<div class="filter" v-for="(nb,filter) in filterCategory.list" :key="filter" v-on:click="selectFilter(filterCategory.selectedList,filter)" v-bind:class="{ filterActif: filterIsSelected(filterCategory.selectedList,filter) }">
@@ -149,19 +149,19 @@ export default {
 		filterIsSelected(list,value){
 			return list.indexOf(value)!=-1
 		},
-		iconSortBy(btn){
-			if(btn!=this.currentCriteria){
-				return ""
-			}else{
-				return (this.sortDirection[btn]==1 ? "expand_more" : "expand_less")
-			}
-		},
 		clearFilters(type){
 			if(type=="tags")this.selectedTags = []
 			if(type=="themes")this.selectedThemes = []
 			if(type=="sources")this.selectedSources = []
 			if(type=="authors")this.selectedAuthors = []
 			this.filterList()
+		},
+		iconSortBy(btn){
+			if(btn!=this.currentCriteria){
+				return ""
+			}else{
+				return (this.sortDirection[btn]==1 ? "expand_more" : "expand_less")
+			}
 		},
 		setFramableUrl(url){
 			if(url!==""&&url!==undefined){
