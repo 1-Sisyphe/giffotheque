@@ -6,7 +6,7 @@
 		<div id="slogan">Peut-être la toute première giffothèque de France au monde</div>
 	</div>
 	<div class="container" id="containerBoutons">
-		<a id="menuBtn" href="#" @click="active=!active" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
+		<a id="menuBtn" href="#" @click="menu=!menu" class="btn-large button-collapse hoverable btnTri"><i class="material-icons left">menu</i>Filtrer</a>
 		<a id="triDate" href="#" class="btn-large hoverable btnTri" v-on:click="sortList('date',true)" v-bind:class="{ disabled: currentCriteria!='date' }">
 			<i class="material-icons right">{{iconSortBy('date')}}</i>Date
 		</a>
@@ -14,7 +14,7 @@
 			<i class="material-icons right">{{iconSortBy('karma')}}</i>Karma
 		</a>
 	</div>
-	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="active">
+	<vs-sidebar parent="body" position-right default-index="1" color="primary" class="sidebarx" spacer v-model="menu">
 		<div id="wrapSideBar">
 			<span id="nbGifsSelected">{{textNbGifs()}}</span>
 			<hr>
@@ -22,7 +22,7 @@
 				<i v-on:click="clearFilters(filterCategory.id)" v-show="filterCategory.selectedList.length!=0" class="material-icons right clearFilters">clear</i><br>
 				<h3 class="categoryFilters">{{filterCategory.name}}</h3>
 				<div class="wrapFilters">
-					<div class="filter" v-for="(nb,filter) in filterCategory.list" :key="filter" v-on:click="selectFilter(filterCategory.selectedList,filter)" v-bind:class="{ filterActif: filterIsSelected(filterCategory.selectedList,filter) }">
+					<div class="filter" v-for="(nb,filter) in filterCategory.list" :key="filter" v-on:click="selectFilter(filterCategory.selectedList,filter)" v-bind:class="{ filterActif: filterCategory.selectedList.indexOf(filter)!=-1 }">
 						{{filter}} <span class="nbGifFilter">({{nb}})</span>
 					</div>
 				</div>
@@ -78,15 +78,15 @@ export default {
 			framableVisible : false,
 			loading:true,
 			scrolling:false,
-			active:false
+			menu:false
 		}
 	}, 
 	computed: {
 		filterCategories(){
 			return [
-				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés",id:"tags"},
 				{"selectedList":this.selectedThemes,"list":this.themes,"name":"Thèmes",id:"themes"},
 				{"selectedList":this.selectedSources,"list":this.sources,"name":"Source",id:"sources"},
+				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés",id:"tags"},
 				{"selectedList":this.selectedAuthors,"list":this.authors,"name":"Auteurs",id:"authors"}
 			]
 		}
@@ -145,9 +145,6 @@ export default {
 				list.splice(list.indexOf(value),1)
 			}
 			this.filterList()
-		},
-		filterIsSelected(list,value){
-			return list.indexOf(value)!=-1
 		},
 		clearFilters(type){
 			if(type=="tags")this.selectedTags = []
