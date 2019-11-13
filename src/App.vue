@@ -386,11 +386,11 @@ body{
 }
 .filter,.tag,.theme,.source{
 	display:inline-block;
-	margin:0.1em 0.2em;
+	margin:0.03em 0.2em;
 	border-radius:0.2em;
 	cursor:pointer;
-	padding:0.2em 0.4em;
-	font-size:1.2em;
+	padding:0.05em 0.4em;
+	font-size:1em;
 	background:#222;
 	border:solid grey 2px;
 	color:#dddddd;
