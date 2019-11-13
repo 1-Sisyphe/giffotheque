@@ -86,7 +86,7 @@ export default {
 			return [
 				{"selectedList":this.selectedThemes,"list":this.themes,"name":"Thèmes",id:"themes"},
 				{"selectedList":this.selectedSources,"list":this.sources,"name":"Source",id:"sources"},
-				{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés",id:"tags"},
+				//{"selectedList":this.selectedTags,"list":this.tags,"name":"Mots-clés",id:"tags"},
 				{"selectedList":this.selectedAuthors,"list":this.authors,"name":"Auteurs",id:"authors"}
 			]
 		}
